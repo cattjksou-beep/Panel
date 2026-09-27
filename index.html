@@ -1,173 +1,589 @@
-html
-  
 <!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ร้านของเรา - ระบบจัดการคิว</title>
+    <title>waray — Check Q</title>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,Segoe UI,sans-serif;}
-        :root{
-            --primary:#4f46e5;--primary-hover:#4338ca;
-            --success:#10b981;--warning:#f59e0b;--danger:#ef4444;
-            --g50:#f9fafb;--g100:#f3f4f6;--g200:#e5e7eb;
-            --g600:#4b5563;--g700:#374151;--g800:#1f2937;
-            --white:#fff;--shadow:0 1px 3px rgba(0,0,0,.1);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Noto Sans Thai', -apple-system, sans-serif;
         }
-        body{background:var(--g50);color:var(--g800);line-height:1.6;}
-        header{background:var(--white);padding:1rem 5%;box-shadow:var(--shadow);
-            display:flex;justify-content:space-between;align-items:center;
-            position:sticky;top:0;z-index:100;}
-        .logo{font-size:1.25rem;font-weight:600;color:var(--g800);text-decoration:none;}
-        .nav-links a{margin-left:1.5rem;color:var(--g600);text-decoration:none;}
-        .nav-links a:hover,.nav-links a.active{color:var(--primary);font-weight:500;}
-        .container{max-width:900px;margin:2rem auto;padding:0 1.5rem;}
-        .card{background:var(--white);padding:2rem;border-radius:12px;
-            box-shadow:var(--shadow);margin-bottom:2rem;}
-        .card h2{font-size:1.25rem;margin-bottom:1.5rem;}
-        .current-queue{text-align:center;padding:1.5rem;
-            background:linear-gradient(135deg,var(--primary),var(--primary-hover));
-            color:#fff;border-radius:10px;margin-bottom:2rem;}
-        .current-queue .number{font-size:3rem;font-weight:700;margin:.5rem 0;}
-        .queue-table{width:100%;border-collapse:collapse;}
-        .queue-table th,.queue-table td{padding:1rem;text-align:left;border-bottom:1px solid var(--g100);}
-        .queue-table th{color:var(--g600);font-weight:600;font-size:.85rem;}
-        .queue-table tr:hover{background:var(--g50);}
-        .status{display:inline-block;padding:.3rem .75rem;border-radius:20px;font-size:.8rem;font-weight:500;}
-        .status-waiting{background:var(--g100);color:var(--g700);}
-        .status-calling{background:#fef3c7;color:#d97706;}
-        .status-done{background:#d1fae5;color:#059669;}
-        .btn-book{display:inline-block;padding:.875rem 2rem;background:var(--primary);
-            color:#fff;border:none;border-radius:8px;font-size:1rem;cursor:pointer;text-decoration:none;}
-        .btn-book:hover{background:var(--primary-hover);}
-        .btn-google{display:flex;align-items:center;justify-content:center;gap:.75rem;
-            width:100%;padding:.875rem;border:1px solid var(--g200);border-radius:8px;
-            background:var(--white);color:var(--g800);font-size:1rem;cursor:pointer;margin-bottom:1rem;}
-        .btn-google:hover{background:var(--g50);}
-        .login-card{max-width:420px;margin:4rem auto;text-align:center;}
-        .hidden{display:none !important;}
-        footer{text-align:center;padding:2rem;color:var(--g600);font-size:.85rem;}
-        @media(max-width:640px){.nav-links{display:none;}
-            .card{padding:1.5rem;}
-            .queue-table th:nth-child(4),.queue-table td:nth-child(4){display:none;}}
+
+        :root {
+            --bg-1: #f8f9ff;
+            --bg-2: #f0efff;
+            --bg-angle: 135deg;
+            --card: #ffffff;
+            --text: #2d2d2f;
+            --text-light: #949497;
+            --accent: #a78bfa;
+            --accent-hover: #8b5cf6;
+            --btn-text: #ffffff;
+            --border: #f0f0f2;
+            --shadow: 0 2px 12px rgba(0,0,0,0.03);
+            --radius: 16px;
+        }
+
+        body {
+            background: linear-gradient(var(--bg-angle), var(--bg-1), var(--bg-2));
+            min-height: 100vh;
+            color: var(--text);
+            line-height: 1.6;
+            padding-bottom: 3rem;
+            transition: background 0.5s ease;
+        }
+
+        .hidden { display: none !important; }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        /* ===== ปุ่มเข้าหลังร้าน มุมขวาบน ===== */
+        .admin-top-btn {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 999;
+            padding: 0.5rem 1rem;
+            background: var(--accent);
+            color: var(--btn-text);
+            border: none;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+        .admin-top-btn:hover {
+            transform: scale(1.05);
+            background: var(--accent-hover);
+        }
+
+        /* ===== หัวเว็บ แบนเนอร์ + โปรไฟล์ ===== */
+        .banner-area {
+            width: 100%;
+            height: 140px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            background-size: cover;
+            background-position: center;
+            border-radius: 0 0 var(--radius) var(--radius);
+            margin-bottom: -40px;
+        }
+        .profile-area {
+            text-align: center;
+            padding-bottom: 1rem;
+        }
+        .profile-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #ddd;
+            border: 3px solid white;
+            object-fit: cover;
+            box-shadow: var(--shadow);
+        }
+        .site-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            color: var(--text);
+        }
+        .site-sub {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        /* ===== การ์ด ===== */
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1rem;
+        }
+        .card-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        /* ===== สถิติ ===== */
+        .stat-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .stat-box {
+            text-align: center;
+            padding: 1.25rem;
+            background: rgba(167, 139, 250, 0.15);
+            border-radius: 12px;
+        }
+        .stat-num {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+
+        /* ===== รายการคิว ===== */
+        .queue-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .queue-item:last-child { border-bottom: none; }
+        .queue-name { font-weight: 600; font-size: 0.95rem; }
+        .queue-meta { font-size: 0.8rem; color: var(--text-light); margin: 0.25rem 0; }
+        .queue-desc { font-size: 0.9rem; margin: 0.5rem 0; }
+        .status-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+        .status-wait { background: #f3f4f6; color: #4b5563; }
+        .status-doing { background: #fef3c7; color: #b45309; }
+        .status-done { background: #d1fae5; color: #065f46; }
+        .status-cancel { background: #fee2e2; color: #b91c1c; }
+
+        /* ===== แท็บ ===== */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.25rem;
+        }
+        .tab {
+            flex-shrink: 0;
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            background: transparent;
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tab.active {
+            background: var(--accent);
+            color: var(--btn-text);
+            border-color: var(--accent);
+        }
+
+        /* ===== ฟอร์ม & ปุ่ม ===== */
+        input, textarea, select {
+            width: 100%;
+            padding: 0.85rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            background: white;
+        }
+        input[type="password"] { letter-spacing: 2px; }
+        input[type="color"] { height: 50px; padding: 2px; cursor: pointer; }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .btn {
+            padding: 0.85rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.9; }
+        .btn-primary {
+            background: var(--accent);
+            color: var(--btn-text);
+            width: 100%;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+        .btn-danger { background: #fee2e2; color: #b91c1c; }
+
+        .date-display {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+        .login-box { margin-top: 4rem; }
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .price-row:last-child { border-bottom: none; }
+        .price-val {
+            font-weight: 600;
+            color: var(--accent);
+        }
+        .upload-preview {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 8px;
+            margin: 0.5rem 0;
+            object-fit: cover;
+        }
+        .color-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
     </style>
 </head>
 <body>
-<header>
-    <a href="#" class="logo">ชื่อร้านของเรา</a>
-    <nav class="nav-links" id="mainNav">
-        <a href="#" class="active" data-page="queue">คิวปัจจุบัน</a>
-        <a href="#" data-page="book">จองคิว</a>
-        <a href="#" data-page="history">ประวัติ</a>
-        <a href="#" id="logoutBtn">ออกจากระบบ</a>
-    </nav>
-</header>
 
-<main id="loginPage" class="container login-card">
+<!-- ===== ปุ่มเข้าหลังร้าน มุมขวาบน ===== -->
+<button id="adminTopBtn" class="admin-top-btn" onclick="showPage('login')">⚙️ หลังร้าน</button>
+
+<!-- ===== หน้าลูกค้า ===== -->
+<div id="homePage">
+    <!-- แบนเนอร์ -->
+    <div class="banner-area" id="bannerArea"></div>
+
+    <div class="container">
+        <!-- โปรไฟล์ร้าน -->
+        <div class="profile-area">
+            <img id="profileImg" class="profile-img" src="" alt="รูปโปรไฟล์" onerror="this.src='https://via.placeholder.com/80'">
+            <h1 class="site-title" id="shopNameDisplay">waray</h1>
+            <p class="site-sub">Check Q · Guest</p>
+        </div>
+
+        <p class="date-display" id="dateDisplay"></p>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('q')">NEXT QUEUE</button>
+            <button class="tab" onclick="showTab('works')">งานตัวอย่าง</button>
+            <button class="tab" onclick="showTab('price')">ราคา</button>
+            <button class="tab" onclick="showTab('deadline')">เดดไลน์</button>
+        </div>
+
+        <!-- เช็คคิว -->
+        <div id="tabQ">
+            <div class="stat-row">
+                <div class="stat-box">
+                    <p class="stat-num" id="waitCount">4</p>
+                    <p class="stat-label">จำนวนคิวก่อนหน้า</p>
+                </div>
+                <div class="stat-box">
+                    <p class="stat-num" id="percentStat">0%</p>
+                    <p class="stat-label">ความสำเร็จวันนี้</p>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 1.5rem;">
+                <p class="card-title">Today's Task</p>
+                <div id="queueListCustomer"></div>
+            </div>
+        </div>
+
+        <!-- ตัวอย่างงาน -->
+        <div id="tabWorks" class="hidden">
+            <div class="card">
+                <p class="card-title">ผลงานของเรา</p>
+                <div id="worksListCustomer"></div>
+            </div>
+        </div>
+
+        <!-- ราคา -->
+        <div id="tabPrice" class="hidden">
+            <div class="card">
+                <p class="card-title">รายการบริการ</p>
+                <div id="priceListCustomer"></div>
+            </div>
+        </div>
+
+        <!-- เดดไลน์ -->
+        <div id="tabDeadline" class="hidden">
+            <div class="card">
+                <p class="card-title">กำหนดส่งงาน</p>
+                <p style="color: var(--text-light); font-size: 0.85rem; margin-bottom: 1rem;">แจ้งล่วงหน้าตามรายการด้านล่าง</p>
+                <div id="deadlineList"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== หน้าล็อกอิน ===== -->
+<div id="loginPage" class="container hidden login-box">
     <div class="card">
-        <h2>เข้าสู่ระบบ</h2>
-        <p style="color:var(--g600);margin-bottom:2rem;">จัดการคิวและร้านค้าของคุณ</p>
-        <button class="btn-google" id="googleLoginBtn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-            </svg>
-            เข้าสู่ระบบด้วย Google
-        </button>
-        <p style="font-size:.8rem;color:var(--g600);margin-top:1rem;">
-            เข้าสู่ระบบด้วย Google ครั้งแรก = สมัครให้อัตโนมัติ<br>
-            เปิดร้านของคุณได้ทันที
-        </p>
+        <h2 style="text-align: center; margin-bottom: 1.5rem; font-size: 1.1rem; font-weight: 500; color: var(--text-light);">เข้าสู่ระบบจัดการร้าน</h2>
+        <label>รหัสผ่าน</label>
+        <input type="password" id="passInput" placeholder="กรอกรหัสผ่าน">
+        <button class="btn btn-primary" onclick="checkPass()">เข้าสู่ระบบ</button>
+        <p style="text-align: center; margin-top: 1rem;"><a href="#" onclick="showPage('home')" style="color: var(--text-light); text-decoration: none; font-size: 0.8rem;">← กลับหน้าแรก</a></p>
     </div>
-</main>
+</div>
 
-<main id="queuePage" class="container hidden">
-    <div class="current-queue">
-        <p class="label">กำลังเรียกคิวที่</p>
-        <p class="number" id="currentNumber">A003</p>
-        <p class="label">รออีก <span id="waitCount">3</span> คิว</p>
+<!-- ===== หลังบ้าน แอดมิน ===== -->
+<div id="adminPage" class="container hidden">
+    <header style="text-align: center; margin-bottom: 1.5rem;">
+        <h1 style="font-size: 1.3rem;">⚙️ จัดการร้าน</h1>
+    </header>
+
+    <div class="tabs">
+        <button class="tab active" onclick="showAdminTab('queue')">คิว</button>
+        <button class="tab" onclick="showAdminTab('works')">ผลงาน</button>
+        <button class="tab" onclick="showAdminTab('price')">ราคา</button>
+        <button class="tab" onclick="showAdminTab('profile')">โปรไฟล์</button>
+        <button class="tab" onclick="showAdminTab('color')">สีธีม</button>
+        <button class="tab" onclick="showAdminTab('pass')">รหัส</button>
     </div>
 
-    <div class="card">
-        <h2>📋 รายการคิวทั้งหมด</h2>
-        <table class="queue-table">
-            <thead>
-                <tr>
-                    <th>คิวที่</th>
-                    <th>ชื่อลูกค้า</th>
-                    <th>สถานะ</th>
-                    <th>เวลาจอง</th>
-                </tr>
-            </thead>
-            <tbody id="queueBody">
-                <tr><td>A001</td><td>สมชาย</td><td><span class="status status-done">เสร็จสิ้น</span></td><td>09:00</td></tr>
-                <tr><td>A002</td><td>สุนิสา</td><td><span class="status status-done">เสร็จสิ้น</span></td><td>09:15</td></tr>
-                <tr><td>A003</td><td>วิโรจน์</td><td><span class="status status-calling">กำลังเรียก</span></td><td>09:30</td></tr>
-                <tr><td>A004</td><td>นันท์</td><td><span class="status status-waiting">รอเรียก</span></td><td>09:45</td></tr>
-                <tr><td>A005</td><td>กมลา</td><td><span class="status status-waiting">รอเรียก</span></td><td>10:00</td></tr>
-            </tbody>
-        </table>
+    <!-- จัดการคิว -->
+    <div id="adminQueue">
+        <div class="card">
+            <p class="card-title">+ เพิ่มคิวใหม่</p>
+            <label>ชื่อลูกค้า</label>
+            <input type="text" id="qName" placeholder="">
+            <label>ช่องทาง</label>
+            <input type="text" id="qChannel" placeholder="">
+            <label>รายละเอียดงาน</label>
+            <textarea id="qDetail" rows="2" placeholder=""></textarea>
+            <label>กำหนดส่ง</label>
+            <input type="date" id="qDeadline">
+            <label>สถานะ</label>
+            <select id="qStatus">
+                <option value="wait">รอเรียก</option>
+                <option value="doing" selected>กำลังทำ</option>
+                <option value="done">เสร็จสิ้น</option>
+                <option value="cancel">ยกเลิก</option>
+            </select>
+            <button class="btn btn-primary" onclick="addQueue()">บันทึกคิว</button>
+        </div>
+        <div class="card">
+            <p class="card-title">รายการคิวทั้งหมด</p>
+            <div id="queueListAdmin"></div>
+        </div>
     </div>
 
-    <div class="card" style="text-align:center;">
-        <h2>📥 จองคิวล่วงหน้า</h2>
-        <p style="color:var(--g600);margin-bottom:1rem;">เพิ่มคิวสำหรับลูกค้า</p>
-        <button class="btn-book" id="addQueueBtn">+ เพิ่มคิวใหม่</button>
+    <!-- ผลงาน -->
+    <div id="adminWorks" class="hidden">
+        <div class="card">
+            <p class="card-title">+ เพิ่มผลงาน</p>
+            <label>ชื่อผลงาน</label>
+            <input type="text" id="wName" placeholder="">
+            <label>รายละเอียด</label>
+            <textarea id="wDesc" rows="2" placeholder=""></textarea>
+            <button class="btn btn-primary" onclick="addWork()">บันทึก</button>
+        </div>
+        <div class="card">
+            <p class="card-title">รายการผลงาน</p>
+            <div id="worksListAdmin"></div>
+        </div>
     </div>
-</main>
 
-<footer>
-    <p>© 2026 ชื่อร้านของเรา · ระบบจัดการคิวของเราเอง</p>
-</footer>
+    <!-- ราคา -->
+    <div id="adminPrice" class="hidden">
+        <div class="card">
+            <p class="card-title">+ เพิ่มรายการราคา</p>
+            <label>ชื่อบริการ</label>
+            <input type="text" id="pName" placeholder="">
+            <label>ราคา</label>
+            <input type="text" id="pPrice" placeholder="">
+            <label>รายละเอียด</label>
+            <textarea id="pDesc" rows="2" placeholder=""></textarea>
+            <button class="btn btn-primary" onclick="addPrice()">บันทึก</button>
+        </div>
+        <div class="card">
+            <p class="card-title">รายการราคา</p>
+            <div id="priceListAdmin"></div>
+        </div>
+    </div>
+
+    <!-- โปรไฟล์ + แบนเนอร์ -->
+    <div id="adminProfile" class="hidden">
+        <div class="card">
+            <p class="card-title">ข้อมูลร้าน & รูปภาพ</p>
+            <label>ชื่อร้าน</label>
+            <input type="text" id="shopNameInput">
+            
+            <label>รูปโปรไฟล์ร้าน</label>
+            <input type="file" id="profileUpload" accept="image/*" onchange="handleProfileUpload(event)">
+            <img id="profilePreview" class="upload-preview hidden" alt="พรีวิว">
+            
+            <label>รูปแบนเนอร์/หัวร้าน</label>
+            <input type="file" id="bannerUpload" accept="image/*" onchange="handleBannerUpload(event)">
+            <img id="bannerPreview" class="upload-preview hidden" style="width: 100%; max-height: 80px;" alt="พรีวิว">
+            
+            <button class="btn btn-primary" onclick="saveProfile()">บันทึกโปรไฟล์</button>
+        </div>
+    </div>
+
+    <!-- ตั้งค่าสี & ไล่สี -->
+    <div id="adminColor" class="hidden">
+        <div class="card">
+            <p class="card-title">🎨 ปรับสีธีม</p>
+            <div class="color-grid">
+                <div>
+                    <label>พื้นหลังสีที่ 1</label>
+                    <input type="color" id="bgColor1">
+                </div>
+                <div>
+                    <label>พื้นหลังสีที่ 2</label>
+                    <input type="color" id="bgColor2">
+                </div>
+            </div>
+            
+            <label>มุมองศาไล่สี</label>
+            <input type="range" id="bgAngle" min="0" max="360" value="135" oninput="updateColorPreview()">
+            <span id="angleValue">135°</span>
+
+            <label>สีปุ่ม/สีหลัก</label>
+            <input type="color" id="accentColor">
+            
+            <label>สีปุ่มตอนกด/ชี้</label>
+            <input type="color" id="accentHoverColor">
+            
+            <label>สีตัวอักษรบนปุ่ม</label>
+            <input type="color" id="btnTextColor">
+            
+            <label>สีข้อความหลัก</label>
+            <input type="color" id="textColor">
+            
+            <label>สีข้อความรอง/จาง</label>
+            <input type="color" id="textLightColor">
+            
+            <label>สีพื้นการ์ด</label>
+            <input type="color" id="cardColor">
+
+            <button class="btn btn-primary" onclick="applyColors()">✅ ใช้สีนี้</button>
+            <button class="btn btn-outline" onclick="resetColors()" style="margin-top: 0.5rem;">↩️ คืนค่าเดิม</button>
+        </div>
+    </div>
+
+    <!-- เปลี่ยนรหัส -->
+    <div id="adminPass" class="hidden">
+        <div class="card">
+            <p class="card-title">เปลี่ยนรหัสผ่าน</p>
+            <label>รหัสเดิม</label>
+            <input type="password" id="oldPass">
+            <label>รหัสใหม่</label>
+            <input type="password" id="newPass1">
+            <label>ยืนยันรหัสใหม่</label>
+            <input type="password" id="newPass2">
+            <button class="btn btn-primary" onclick="changePass()">ยืนยันเปลี่ยน</button>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 2rem;">
+        <button class="btn btn-outline" onclick="logout()">ออกจากระบบ</button>
+    </div>
+</div>
 
 <script>
-const loginPage=document.getElementById('loginPage');
-const queuePage=document.getElementById('queuePage');
-const googleLoginBtn=document.getElementById('googleLoginBtn');
-const logoutBtn=document.getElementById('logoutBtn');
-const addQueueBtn=document.getElementById('addQueueBtn');
+// ===== ข้อมูลเริ่มต้น =====
+const defaultData = {
+    shopName: 'waray',
+    profileImage: '',
+    bannerImage: '',
+    password: '1234',
+    colors: {
+        bg1: '#f8f9ff',
+        bg2: '#f0efff',
+        bgAngle: 135,
+        accent: '#a78bfa',
+        accentHover: '#8b5cf6',
+        btnText: '#ffffff',
+        text: '#2d2d2f',
+        textLight: '#949497',
+        card: '#ffffff'
+    },
+    queue: [
+        {id:1,name:'Blessing Abyssborn',channel:'FACEBOOK',detail:'ป้ายเรทแนวคุณกาต่าย เหมา 3 ป้าย',deadline:'2026-09-28',status:'doing'}
+    ],
+    works: [
+        {id:1,name:'🦊 ป้ายเรท',desc:'ออกแบบตามต้องการ'},
+        {id:2,name:'🦊 งานกราฟิก',desc:'รับทำทุกสไตล์'},
+        {id:3,name:'🦊 ป้ายกำกับ',desc:'สวยๆ ตามใจชอบ'},
+        {id:4,name:'🦊 อื่นๆ',desc:'ปรึกษากันได้'}
+    ],
+    prices: [
+        {id:1,name:'ป้ายเรท',price:'300 บาท/ป้าย',desc:'เหมา 3 ป้าย 800 บาท'},
+        {id:2,name:'งานออกแบบ',price:'ติดต่อ',desc:'แจ้งรายละเอียดเพื่อเสนอราคา'}
+    ]
+};
 
-let isLoggedIn=localStorage.getItem('isLoggedIn')==='true';
-
-function updatePage(){
-    if(isLoggedIn){loginPage.classList.add('hidden');queuePage.classList.remove('hidden');}
-    else{loginPage.classList.remove('hidden');queuePage.classList.add('hidden');}
+// ===== จัดการข้อมูล =====
+function getData(key){
+    const saved = localStorage.getItem(key);
+    return saved ? JSON.parse(saved) : defaultData[key];
+}
+function saveData(key, val){
+    localStorage.setItem(key, JSON.stringify(val));
 }
 
-googleLoginBtn.addEventListener('click',()=>{
-    localStorage.setItem('isLoggedIn','true');isLoggedIn=true;updatePage();
-});
-
-logoutBtn.addEventListener('click',()=>{
-    localStorage.removeItem('isLoggedIn');isLoggedIn=false;updatePage();
-});
-
-addQueueBtn.addEventListener('click',()=>{
-    const name=prompt('กรุณาระบุชื่อลูกค้า:');
-    if(!name)return;
-    const tbody=document.getElementById('queueBody');
-    const lastRow=tbody.lastElementChild;
-    let lastNo='A000';
-    if(lastRow)lastNo=lastRow.querySelector('td:first-child').textContent;
-    const num=parseInt(lastNo.replace('A',''))+1;
-    const newNo='A'+String(num).padStart(3,'0');
-    const now=new Date();
-    const time=now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
-    const newRow=document.createElement('tr');
-    newRow.innerHTML=`<td>${newNo}</td><td>${name}</td><td><span class="status status-waiting">รอเรียก</span></td><td>${time}</td>`;
-    tbody.appendChild(newRow);
-    updateWaitCount();
-});
-
-function updateWaitCount(){
-    const waiting=document.querySelectorAll('.status-waiting').length;
-    document.getElementById('waitCount').textContent=waiting;
+// ===== แสดงหน้า =====
+function showPage(pg){
+    document.getElementById('homePage').classList.add('hidden');
+    document.getElementById('loginPage').classList.add('hidden');
+    document.getElementById('adminPage').classList.add('hidden');
+    document.getElementById('adminTopBtn').style.display = 'block';
+    
+    if(pg === 'home') {
+        document.getElementById('homePage').classList.remove('hidden');
+        document.getElementById('adminTopBtn').style.display = 'block';
+        renderCustomer();
+    }
+    if(pg === 'login') {
+        document.getElementById('loginPage').classList.remove('hidden');
+        document.getElementById('adminTopBtn').style.display = 'none';
+    }
+    if(pg === 'admin') {
+        document.getElementById('adminPage').classList.remove('hidden');
+        document.getElementById('adminTopBtn').style.display = 'none';
+        renderAdmin();
+    }
 }
 
-updatePage();updateWaitCount();
-</script>
-</body>
-</html>
+// ===== ล็อกอิน =====
+function checkPass(){
+    const pass = document.getElementById('passInput').value;
+    if(pass === getData('password')){
+        showPage('admin');
+        document.getElementById('passInput').value = '';
+    } else {
+        alert('รหัสผ่านไม่ถูกต้อง');
+        document.getElementById('passInput').value = '';
+    }
+}
+function logout(){
+    showPage('home');
+}
+
+// ===== เปลี่ยนรหัส =====
+function changePass(){
+    const oldP = document.getElementById('oldPass').value;
+    const newP1 = document.getElementById('newPass1').value;
+    const newP2 = document.getElementById('newPass2').value;
+   
